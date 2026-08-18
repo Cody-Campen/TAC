@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./empirical/data/processed/**)",
+      "Read(./empirical/config/data_path.local.txt)",
+      "Grep(./empirical/data/processed/**)",
+      "Grep(./empirical/config/data_path.local.txt)",
+      "Glob(./empirical/data/processed/**)"
+    ]
+  }
+}

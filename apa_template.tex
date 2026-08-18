@@ -1,0 +1,91 @@
+\documentclass[man,longtable,12pt]{apa7}
+
+% ---------- Language / fonts ----------
+\usepackage[american]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{listings} % For inline source code
+
+% ---------- Math & graphics ----------
+\usepackage{amsmath}
+\usepackage{newtxtext,newtxmath} % Times new roman + times new roman math
+\usepackage{csquotes}
+
+% ---------- Tables and Figures ----------
+\usepackage{cleveref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{rotating}
+
+
+% ---------- Equation spacing ----------
+\AtBeginDocument{%
+  \setlength{\abovedisplayskip}{12pt plus 3pt minus 3pt}%
+  \setlength{\belowdisplayskip}{12pt plus 3pt minus 3pt}%
+  \setlength{\abovedisplayshortskip}{12pt plus 3pt minus 3pt}%
+  \setlength{\belowdisplayshortskip}{12pt plus 3pt minus 3pt}%
+  \setlength{\jot}{12pt}%
+}
+
+% ---------- Bibliography ----------
+\usepackage[style=apa,sortcites=true,sorting=nyt,backend=biber]{biblatex}
+\DeclareLanguageMapping{american}{american-apa}
+\addbibresource{references.bib}
+
+% For feedback
+\usepackage{todonotes,changes}
+
+% ---------- Title page fields ----------
+\title{THE TITLE}
+\shorttitle{SHORT TITLE}
+
+\authorsnames[1,{1,2},1]{Cody A. Campen, Timothy R. Brick, Sy-Miin Chow}
+
+\authorsaffiliations{
+  {Department of Human Development and Family Studies, The Pennsylvania State University},
+  {Institute for Computational and Data Sciences, The Pennsylvania State University},
+}
+
+\leftheader{Campen}
+
+
+\authornote{
+  \addORCIDlink{Cody A. Campen}{0009-0009-8664-5283} \\
+  \addORCIDlink{Timothy R. Brick}{0000-0002-3339-9279} \\
+  \addORCIDlink{Sy-Miin Chow}{0000-0003-1938-027X}
+
+  The author has no conflicts of interest to disclose.
+
+   Correspondence concerning this manuscript should be addressed to 
+   Cody A. Campen, Department of Human Development and Family Studies, 
+   237 HHD Building, The Pennsylvania State University, University Park, 
+   PA 16802, USA. Email: cac7655@psu.edu
+}
+
+\abstract{THE ABSTRACT.}
+
+\keywords{KEYWORD, KEYWORD, KEYWORD}
+
+\begin{document}
+
+\maketitle
+
+% ---------- Body ----------
+
+\input{sections/01_background}
+\input{sections/02_simulation_method}
+\input{sections/03_simulation_results}
+\input{sections/04_empirical_method}
+\input{sections/05_empirical_results}
+\input{sections/06_discussion}
+
+% ---------- References ----------
+\printbibliography
+
+% ---------- Appendices ----------
+% \appendix
+% \section{Supplementary Materials}
+% \label{app:supplement}
+
+\end{document}
