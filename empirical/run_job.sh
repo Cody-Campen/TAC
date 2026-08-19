@@ -1,14 +1,13 @@
 #!/bin/bash
 # run_job.sh
-# Submits the empirical-results pipeline (clean -> analyze -> tables ->
-# figures) as one SLURM job.
+# Submits the empirical pipeline (clean -> analyze -> tables -> figures)
+# as one SLURM job.
 #
 # Usage: sbatch empirical/run_job.sh
 #
-# The real dataset must be reachable from the compute node: place
-# empirical/config/data_path.local.txt on the cluster filesystem,
-# pointing at the real data's absolute path, before submitting -- see
-# empirical/README.md.
+# Real dataset must be reachable from the compute node: put
+# empirical/config/data_path.local.txt on the cluster filesystem first
+# -- see empirical/README.md.
 
 #SBATCH --job-name=empirical
 #SBATCH --output=empirical/logs/slurm_%j.out

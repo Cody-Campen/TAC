@@ -1,10 +1,12 @@
 # get_dataset.R
-# Generates one simulated dataset for a given condition.
-#
-# `params` is a named list of condition values assigned in run_sim.R
-# (e.g. sample size, true effect size). Every condition in the design
-# must supply the fields this function reads.
+# Generates one simulated dataset for a condition. `params` is the named
+# list assigned in run_sim.R; every condition must supply these fields.
 
+#' Draws one dataset from the linear model the study estimates.
+#'
+#' @param params Named list for one condition, supplying the numeric
+#'   scalars `n`, `b0`, `b1`, and `sigma`.
+#' @return Data frame of `n` rows with numeric columns `x` and `y`.
 generate_dataset <- function(params) {
   n  <- params$n
   b0 <- params$b0

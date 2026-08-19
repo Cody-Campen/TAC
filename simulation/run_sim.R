@@ -1,37 +1,45 @@
 # run_sim.R
-# Defines the simulation design (the full factorial grid of condition
-# parameters), picks the one condition this job is responsible for, and
-# runs it via main.R.
+# The entry point for a single simulation task. Defines the design grid --
+# the experimental factors crossed with the replication seeds -- and runs
+# the one task named on the command line. One task = one row of the grid =
+# one replication, no in-process loop, so tasks fail and resubmit
+# independently of each other.
 #
-# Condition index comes from the command line so the same script works
-# both locally (`Rscript simulation/run_sim.R 3`) and as one task of a
-# SLURM array job (run_jobs.sh passes $SLURM_ARRAY_TASK_ID).
+#   Rscript simulation/run_sim.R 3          # run task 3
+#   Rscript simulation/run_sim.R --n-tasks  # print the task count
+#                                           # (run_jobs.sh sizes its
+#                                           # array with this)
+#
+# This is the only script in the per-task path; everything it calls lives
+# in a get_*/run_task file that defines functions and nothing else.
 
-args <- commandArgs(trailingOnly = TRUE)
-cond_id <- if (length(args) >= 1) as.integer(args[1]) else 1L
-
-# ---- Design: factors crossed to form the condition grid ----
-design <- expand.grid(
-  n  = c(50, 100, 250),
-  b1 = c(0, 0.2, 0.5),
-  KEEP.OUT.ATTRS = FALSE
-)
-design$cond_id <- seq_len(nrow(design))
+source("simulation/get_conditions.R")
 
 # ---- Fixed (non-manipulated) parameters ----
 b0    <- 0
 sigma <- 1
-nsim  <- 500
 
-stopifnot(cond_id >= 1L, cond_id <= nrow(design))
-row <- design[cond_id, ]
+# ---- Design: change the factor levels in make_design()'s defaults ----
+design <- make_design()
 
-params <- list(
-  cond_id = row$cond_id,
-  n       = row$n,
-  b1      = row$b1,
-  b0      = b0,
-  sigma   = sigma
-)
+args <- commandArgs(trailingOnly = TRUE)
+if (identical(args[1], "--n-tasks")) {
+  cat(nrow(design), "\n", sep = "")
+  quit(save = "no")
+}
 
-source("simulation/main.R")
+task_id <- suppressWarnings(as.integer(args[1]))
+if (is.na(task_id) || task_id < 1L || task_id > nrow(design)) {
+  stop(sprintf("usage: Rscript simulation/run_sim.R <task_id in 1:%d>|--n-tasks",
+               nrow(design)))
+}
+
+# Loaded only once there is a task to run, so --n-tasks stays quick and
+# quiet -- run_jobs.sh reads its output straight into the sbatch array size.
+source("simulation/get_dataset.R")
+source("simulation/get_estimates.R")
+source("simulation/run_task.R")
+
+params <- params_for_task(design, task_id, fixed = list(b0 = b0, sigma = sigma))
+
+run_task(params)

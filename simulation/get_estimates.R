@@ -1,16 +1,19 @@
 # get_estimates.R
-# Fits the model to one simulated dataset and extracts the quantities
-# needed for performance evaluation.
-#
-# Returns a one-row broom::tidy() data frame (term, estimate, std.error,
-# statistic, p.value, conf.low, conf.high) for the "x" term, so replications
-# can be row-bound directly and share column names with the empirical
-# pipeline's estimates. `converged` lets get_answers.R compute
-# convergence/failure rates and drop non-converged replications from the
-# performance measures.
+# Fits the model to one dataset, returns a one-row broom::tidy() frame
+# for the "x" term (row-bindable across replications, same columns as
+# the empirical pipeline). `converged` lets get_answers.R compute
+# convergence rates and drop failed fits from performance measures.
 
 library(broom)
 
+#' Fits the model to one dataset and tidies the "x" term.
+#'
+#' @param data Data frame from generate_dataset(), with numeric columns
+#'   `x` and `y`.
+#' @return One-row data frame: numeric `estimate`, `std.error`,
+#'   `conf.low`, `conf.high`, and logical `converged`.
+# A failed fit returns the same columns with NA estimates rather than an
+# error, so the failure stays countable instead of vanishing from results.
 fit_model <- function(data) {
   fit <- tryCatch(lm(y ~ x, data = data), error = function(e) NULL)
 

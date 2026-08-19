@@ -1,37 +1,27 @@
 # make_figures.R
-# Run after run_analysis.R. Reads empirical/data/processed/cleaned.rds and
-# writes empirical/figures/fig_empirical.png, referenced by
-# sections/05_empirical_results.tex via \includegraphics.
+# Builds the empirical figure from the cleaned data. empirical/main.R
+# saves it to empirical/figures/fig_empirical.png, \includegraphics'd by
+# sections/05_empirical_results.tex.
 #
-#   Rscript empirical/make_figures.R
+# Pure -- theme_apa_minimal() comes from shared/style.R.
 
-cleaned <- readRDS("empirical/data/processed/cleaned.rds")
-results <- readRDS("empirical/data/processed/results.rds")
+library(ggplot2)
 
-dir.create("empirical/figures", showWarnings = FALSE, recursive = TRUE)
+group_colors <- c(control = "#404040", treatment = "#A0A0A0")
 
-png("empirical/figures/fig_empirical.png", width = 6, height = 4.5, units = "in", res = 300)
-
-group_colors <- c(control = "#4C72B0", treatment = "#DD8452")
-
-plot(
-  cleaned$x1, cleaned$y,
-  col = group_colors[as.character(cleaned$group)],
-  pch = 16, cex = 0.8,
-  xlab = expression(X[1]), ylab = "Y",
-  main = "Empirical Analysis: Outcome by Predictor and Group"
-)
-
-for (g in levels(cleaned$group)) {
-  sub <- cleaned[cleaned$group == g, ]
-  abline(lm(y ~ x1, data = sub), col = group_colors[g], lwd = 2)
+#' Draws the empirical scatter with a fitted line per group.
+#'
+#' @param cleaned Data frame from clean_dataset(), with `x1`, `y`, and
+#'   factor `group`.
+#' @return A ggplot object.
+# Fitted lines are drawn by geom_smooth() from the same data, so this
+# needs the cleaned observations only, not the saved model object.
+make_empirical_figure <- function(cleaned) {
+  ggplot(cleaned, aes(x = x1, y = y, color = group, shape = group)) +
+    geom_point(size = 1.6, alpha = 0.8) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_manual(values = group_colors, name = "Group") +
+    scale_shape_discrete(name = "Group") +
+    labs(x = expression(X[1]), y = "Y") +
+    theme_apa_minimal()
 }
-
-legend(
-  "topleft", legend = levels(cleaned$group),
-  col = group_colors[levels(cleaned$group)], pch = 16, lwd = 2, bty = "n"
-)
-
-dev.off()
-
-message("Wrote empirical/figures/fig_empirical.png")
