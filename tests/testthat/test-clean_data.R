@@ -1,6 +1,4 @@
-# test-clean_data.R -- empirical/functions/clean_data.R
-# Checks that each exclusion rule drops what it should, that valid rows
-# survive untouched, and that the factor coding the model depends on holds.
+# tests for clean_dataset() in empirical/functions/clean_data.R
 
 source_project("empirical/functions/clean_data.R")
 

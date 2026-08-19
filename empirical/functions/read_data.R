@@ -10,10 +10,10 @@
 #' @param fallback Single string; path used, with a warning, when
 #'   `config` is absent.
 #' @return Single string, the path to read the raw data from.
-# The fallback warns because silently analysing dummy data and silently
-# analysing the real data look identical downstream.
-raw_data_path <- function(config   = "empirical/config/data_path.local.txt",
-                          fallback = "empirical/data/dummy_raw.csv") {
+# Both paths are supplied by the caller from paths.R. The fallback warns
+# because silently analysing dummy data and silently analysing the real
+# data look identical downstream.
+raw_data_path <- function(config, fallback) {
   if (file.exists(config)) {
     return(trimws(readLines(config, n = 1)))
   }

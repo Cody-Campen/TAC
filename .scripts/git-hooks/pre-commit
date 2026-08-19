@@ -1,7 +1,8 @@
 #!/bin/sh
 # Backstop against ever committing empirical data, even via `git add -f`.
-# Install: cp scripts/git-hooks/pre-commit .git/hooks/pre-commit
-#          chmod +x .git/hooks/pre-commit
+# Install, once per clone: git config core.hooksPath .scripts/git-hooks
+# Pointing git here rather than copying into .git/hooks keeps the hook
+# versioned, so edits take effect without recopying.
 
 forbidden=$(git diff --cached --name-only | grep -E \
   '^empirical/data/(processed|raw)/|^empirical/config/data_path\.local\.txt$')
@@ -9,7 +10,7 @@ forbidden=$(git diff --cached --name-only | grep -E \
 if [ -n "$forbidden" ]; then
   echo "BLOCKED: staged file(s) look like empirical data, not committing:" >&2
   echo "$forbidden" >&2
-  echo "If this is a false positive, unstage it or edit scripts/git-hooks/pre-commit." >&2
+  echo "If this is a false positive, unstage it or edit .scripts/git-hooks/pre-commit." >&2
   exit 1
 fi
 

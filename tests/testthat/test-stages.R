@@ -1,8 +1,6 @@
-# test-stages.R -- shared/stages.R
-# Checks the dispatcher both pipelines run on: which stages fire, in what
-# order, and what a mistyped stage name does.
+# tests for run_stages() in stages.R
 
-source_project("shared/stages.R")
+source_project("stages.R")
 
 # Each stage records that it ran, so a test can read back what happened.
 recording_stages <- function(log) {

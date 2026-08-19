@@ -1,6 +1,4 @@
-# test-get_conditions.R -- simulation/get_conditions.R
-# Checks the design grid is a full crossing in the order the cluster array
-# assumes, and that a task id maps to the right row of it.
+# tests for make_design() and params_for_task() in simulation/get_conditions.R
 
 source_project("simulation/get_conditions.R")
 

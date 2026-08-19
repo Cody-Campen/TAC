@@ -3,7 +3,7 @@
 # them to empirical/tables/tab_empirical.tex, \input by
 # sections/05_empirical_results.tex.
 #
-# Pure -- fmt() comes from shared/style.R, which main.R sources first.
+# Pure -- fmt() comes from style.R, which main.R sources first.
 
 # Display labels for the model's terms. A predictor added to
 # analyze_dataset() needs an entry here or it prints its raw name.

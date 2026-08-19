@@ -1,12 +1,10 @@
-# test-run_task.R -- simulation/run_task.R
-# Checks one cluster task writes the file collect_answers() expects, and that
-# a rerun is safe. Everything here writes to a temporary directory.
+# tests for run_task() and task_file() in simulation/run_task.R
 
 source_project("simulation/get_dataset.R")
 source_project("simulation/get_estimates.R")
 source_project("simulation/run_task.R")
 
-# collect_answers() reads results/raw/ with list.files() and groups by the
+# collect_performance() reads results/raw/ with list.files() and groups by the
 # condition columns, so both the zero-padded name and the tags matter.
 test_that("run_task() writes one padded, tagged file per task", {
   out_dir <- withr::local_tempdir()

@@ -1,6 +1,4 @@
-# test-get_estimates.R -- simulation/get_estimates.R
-# Checks the estimator against OLS worked out by hand from the normal
-# equations, and checks that a failed fit degrades to an NA row.
+# tests for fit_model() in simulation/get_estimates.R
 
 source_project("simulation/get_estimates.R")
 
@@ -18,9 +16,9 @@ test_that("fit_model() recovers the hand-computed slope, SE and interval", {
   expect_equal(est$conf.high,  1.5001317453, tolerance = 1e-7)
 })
 
-# One row for the x term, with the columns get_answers.R reads -- this is
+# One row for the x term, with the columns get_performance.R reads -- this is
 # the shape every replication in results/raw/ is stored in.
-test_that("fit_model() returns the row shape get_answers.R reads", {
+test_that("fit_model() returns the row shape get_performance.R reads", {
   est <- fit_model(worked_example())
 
   expect_equal(nrow(est), 1)
@@ -28,7 +26,7 @@ test_that("fit_model() returns the row shape get_answers.R reads", {
   expect_true(est$converged)
 })
 
-# collect_answers() rbinds successes and failures together, so a fit that
+# collect_performance() rbinds successes and failures together, so a fit that
 # errors has to come back as a flagged NA row with identical columns --
 # not an exception thousands of replications into a cluster run.
 test_that("a fit that errors comes back as an NA row that binds cleanly", {

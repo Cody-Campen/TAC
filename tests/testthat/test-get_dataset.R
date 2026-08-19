@@ -1,6 +1,4 @@
-# test-get_dataset.R -- simulation/get_dataset.R
-# Checks the generated data match the data-generating model exactly where
-# they can be, and that the seed makes a replication reproducible.
+# tests for generate_dataset() in simulation/get_dataset.R
 
 source_project("simulation/get_dataset.R")
 

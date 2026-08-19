@@ -1,7 +1,4 @@
-# test-make_figures-sim.R -- simulation/make_figures.R
-# Covers the wide-to-long reshape behind the facets. The plot itself is
-# not tested -- there is nothing to assert about it that is not just the
-# code restated.
+# tests for sim_results_long() in simulation/make_figures.R
 
 source_project("simulation/make_figures.R")
 

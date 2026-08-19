@@ -1,8 +1,5 @@
 # get_conditions.R
-# The design grid and the task_id -> params mapping. Pure functions, no
-# side effects, so run_sim.R and the test suite can both source it.
-# run_sim.R calls make_design() with the defaults below, so this file
-# stays the single source of truth for the study's actual design.
+# The design grid and the task_id -> params mapping.
 
 #' Fully crosses the study's factors into one row per task.
 #'
@@ -10,10 +7,8 @@
 #'   condition.
 #' @param n Numeric vector of sample sizes.
 #' @param b1 Numeric vector of true slopes.
+#' 
 #' @return Data frame with columns `seed`, `n`, `b1`, one row per task.
-# `seed` is listed first so it varies fastest; reusing the same seeds
-# across conditions gives common random numbers, and the row order is the
-# one run_jobs.sh indexes its array in.
 make_design <- function(seed = 1:500,
                         n    = c(50, 100, 250),
                         b1   = c(0, 0.2, 0.5)) {

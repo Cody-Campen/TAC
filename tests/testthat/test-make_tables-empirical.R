@@ -1,8 +1,6 @@
-# test-make_tables-empirical.R -- empirical/make_tables.R
-# Checks the term labels the paper prints, including what happens to a
-# term nobody has given a label to.
+# tests for make_empirical_table() in empirical/make_tables.R
 
-source_project("shared/style.R")
+source_project("style.R")
 source_project("empirical/make_tables.R")
 
 # The model's internal names are not what the paper should show:

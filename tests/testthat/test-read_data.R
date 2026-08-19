@@ -1,6 +1,4 @@
-# test-read_data.R -- empirical/functions/read_data.R
-# Checks which dataset the pipeline picks up, since the real one lives
-# outside the repo and the fallback looks identical downstream.
+# tests for raw_data_path() in empirical/functions/read_data.R
 
 source_project("empirical/functions/read_data.R")
 

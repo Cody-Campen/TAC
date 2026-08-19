@@ -1,6 +1,4 @@
-# test-analyze_data.R -- empirical/functions/analyze_data.R
-# Checks the fitted model against a hand-derived example and pins the
-# pieces the downstream table scripts read off it.
+# tests for analyze_dataset() in empirical/functions/analyze_data.R
 
 source_project("empirical/functions/analyze_data.R")
 

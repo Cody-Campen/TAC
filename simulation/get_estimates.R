@@ -1,7 +1,7 @@
 # get_estimates.R
 # Fits the model to one dataset, returns a one-row broom::tidy() frame
 # for the "x" term (row-bindable across replications, same columns as
-# the empirical pipeline). `converged` lets get_answers.R compute
+# the empirical pipeline). `converged` lets get_performance.R compute
 # convergence rates and drop failed fits from performance measures.
 
 library(broom)

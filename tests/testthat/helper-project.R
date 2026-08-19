@@ -8,10 +8,11 @@
 
 project_root <- local({
   path <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
-  while (!all(dir.exists(file.path(path, c("simulation", "empirical"))))) {
+  while (!file.exists(file.path(path, ".here"))) {
     parent <- dirname(path)
     if (identical(parent, path)) {
-      stop("could not locate the project root from ", getwd(), call. = FALSE)
+      stop("could not find the .here marker in any parent of ", getwd(),
+           " -- is the project root missing its .here file?", call. = FALSE)
     }
     path <- parent
   }

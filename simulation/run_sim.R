@@ -36,10 +36,11 @@ if (is.na(task_id) || task_id < 1L || task_id > nrow(design)) {
 
 # Loaded only once there is a task to run, so --n-tasks stays quick and
 # quiet -- run_jobs.sh reads its output straight into the sbatch array size.
+source("simulation/paths.R")
 source("simulation/get_dataset.R")
 source("simulation/get_estimates.R")
 source("simulation/run_task.R")
 
 params <- params_for_task(design, task_id, fixed = list(b0 = b0, sigma = sigma))
 
-run_task(params)
+run_task(params, out_dir = sim_paths$raw)

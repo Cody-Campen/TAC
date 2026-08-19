@@ -3,11 +3,11 @@
 # writes them to simulation/tables/tab_sim.tex, \input by
 # sections/03_simulation_results.tex.
 #
-# Pure -- fmt() comes from shared/style.R, which main.R sources first.
+# Pure -- fmt() comes from style.R, which main.R sources first.
 
 #' Builds the simulation results table as LaTeX lines.
 #'
-#' @param results Data frame from collect_answers(), one row per
+#' @param results Data frame from collect_performance(), one row per
 #'   condition, supplying `n`, `b1`, and the measure columns.
 #' @return Character vector of LaTeX lines, one per element.
 make_sim_table <- function(results) {

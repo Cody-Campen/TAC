@@ -3,9 +3,13 @@
 # saves it to empirical/figures/fig_empirical.png, \includegraphics'd by
 # sections/05_empirical_results.tex.
 #
-# Pure -- theme_apa_minimal() comes from shared/style.R.
+# Pure -- theme_apa_minimal() comes from style.R.
 
 library(ggplot2)
+
+# Printed size in inches, handed to ggsave() by main.R. Kept here so the
+# figure and its proportions change in the same edit.
+emp_figure_size <- list(width = 6, height = 4.5)
 
 group_colors <- c(control = "#404040", treatment = "#A0A0A0")
 

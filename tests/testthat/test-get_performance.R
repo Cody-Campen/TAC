@@ -1,8 +1,6 @@
-# test-get_answers.R -- simulation/get_answers.R
-# Checks the performance measures against values worked out by hand from
-# their definitions, never from the expression get_answers.R itself uses.
+# tests for compute_performance() and collect_performance() in simulation/get_performance.R
 
-source_project("simulation/get_answers.R")
+source_project("simulation/get_performance.R")
 
 # true b1 = 0.5, estimates 0.4, 0.5, 0.7 -> errors -0.1, 0, 0.2
 #   bias = 0.1/3, rel_bias = bias/0.5, rmse = sqrt(0.05/3) = sqrt(1/60)
@@ -43,12 +41,12 @@ test_that("failed replications are excluded but still counted", {
   expect_equal(res$nsim, 4)
 })
 
-# ---- collect_answers() ----
+# ---- collect_performance() ----
 
 # The harvest groups thousands of per-task files by condition. Rows
 # leaking between conditions is the failure that would not show up
 # anywhere else: the table still builds, with the wrong numbers in it.
-test_that("collect_answers() gives one row per condition, in table order", {
+test_that("collect_performance() gives one row per condition, in table order", {
   raw_dir <- withr::local_tempdir()
   saveRDS(make_estimates(estimate = 0.4, n = 100, b1 = 0.5),
           file.path(raw_dir, "task_00001.rds"))
@@ -57,7 +55,7 @@ test_that("collect_answers() gives one row per condition, in table order", {
   saveRDS(make_estimates(estimate = 0.1, n = 50, b1 = 0.2),
           file.path(raw_dir, "task_00003.rds"))
 
-  results <- collect_answers(raw_dir)
+  results <- collect_performance(raw_dir)
 
   expect_equal(nrow(results), 2)
   expect_equal(results$n, c(50, 100))              # ordered n, then b1
@@ -68,10 +66,10 @@ test_that("collect_answers() gives one row per condition, in table order", {
 # A task that failed and was never resubmitted leaves fewer files behind.
 # Without this check the results are computed anyway, from fewer
 # replications than the paper reports.
-test_that("collect_answers() refuses a partly finished array", {
+test_that("collect_performance() refuses a partly finished array", {
   raw_dir <- withr::local_tempdir()
   saveRDS(make_estimates(n = 50, b1 = 0.2), file.path(raw_dir, "task_00001.rds"))
 
-  expect_error(collect_answers(raw_dir, expected = 2), "expected 2")
-  expect_error(collect_answers(withr::local_tempdir()), "no task results")
+  expect_error(collect_performance(raw_dir, expected = 2), "expected 2")
+  expect_error(collect_performance(withr::local_tempdir()), "no task results")
 })

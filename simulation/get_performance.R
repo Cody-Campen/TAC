@@ -1,4 +1,4 @@
-# get_answers.R
+# get_performance.R
 # Collapses one condition's per-replication estimates into standard
 # performance measures. `estimates` is fit_model()'s row-bound output
 # (see run_task.R); `params` supplies the true value to judge against.
@@ -41,7 +41,7 @@ compute_performance <- function(estimates, params) {
 #' Harvests every per-task file in `raw_dir` into one row per condition.
 #'
 #' @param raw_dir Single string; directory holding the array's per-task
-#'   .rds files.
+#'   .rds files. Supplied by the caller from paths.R.
 #' @param expected Single number, the design's task count, or NULL to
 #'   skip the completeness check.
 #' @return Data frame of performance measures, one row per condition,
@@ -49,7 +49,7 @@ compute_performance <- function(estimates, params) {
 # Passing `expected` turns a partly finished array -- a task that failed
 # and was never resubmitted -- into an error, instead of results quietly
 # computed from fewer replications than the paper claims.
-collect_answers <- function(raw_dir = "simulation/results/raw", expected = NULL) {
+collect_performance <- function(raw_dir, expected = NULL) {
   raw_files <- list.files(raw_dir, pattern = "\\.rds$", full.names = TRUE)
 
   if (length(raw_files) == 0L) {

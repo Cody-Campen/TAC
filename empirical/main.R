@@ -9,12 +9,8 @@
 # The raw dataset is read in the clean stage and nowhere else; everything
 # after it reads only empirical/data/processed/.
 
-source("shared/stages.R")
-
-cleaned_path <- "empirical/data/processed/cleaned.rds"
-results_path <- "empirical/data/processed/results.rds"
-table_path   <- "empirical/tables/tab_empirical.tex"
-figure_path  <- "empirical/figures/fig_empirical.png"
+source("stages.R")
+source("empirical/paths.R")
 
 usage <- "usage: Rscript empirical/main.R [all|clean|analyze|tables|figures]..."
 
@@ -23,44 +19,46 @@ stages <- list(
     source("empirical/functions/read_data.R")
     source("empirical/functions/clean_data.R")
 
-    raw <- read.csv(raw_data_path(), stringsAsFactors = FALSE)
+    raw <- read.csv(raw_data_path(emp_paths$raw_config, emp_paths$raw_fallback),
+                    stringsAsFactors = FALSE)
     cleaned <- clean_dataset(raw)
 
-    dir.create(dirname(cleaned_path), showWarnings = FALSE, recursive = TRUE)
-    saveRDS(cleaned, cleaned_path)
+    dir.create(dirname(emp_paths$cleaned), showWarnings = FALSE, recursive = TRUE)
+    saveRDS(cleaned, emp_paths$cleaned)
     message(sprintf("Cleaned %d rows -> %d rows.", nrow(raw), nrow(cleaned)))
   },
 
   analyze = function() {
-    require_input(cleaned_path, "Rscript empirical/main.R clean")
+    require_input(emp_paths$cleaned, "Rscript empirical/main.R clean")
     source("empirical/functions/analyze_data.R")
 
-    results <- analyze_dataset(readRDS(cleaned_path))
+    results <- analyze_dataset(readRDS(emp_paths$cleaned))
 
-    saveRDS(results, results_path)
+    saveRDS(results, emp_paths$results)
     message(sprintf("Fit model on n = %d, R^2 = %.3f.",
                     results$n, results$r_squared))
   },
 
   tables = function() {
-    require_input(results_path, "Rscript empirical/main.R analyze")
-    source("shared/style.R")
+    require_input(emp_paths$results, "Rscript empirical/main.R analyze")
+    source("style.R")
     source("empirical/make_tables.R")
 
-    dir.create(dirname(table_path), showWarnings = FALSE, recursive = TRUE)
-    writeLines(make_empirical_table(readRDS(results_path)), table_path)
-    message(sprintf("Wrote %s.", table_path))
+    dir.create(dirname(emp_paths$table), showWarnings = FALSE, recursive = TRUE)
+    writeLines(make_empirical_table(readRDS(emp_paths$results)), emp_paths$table)
+    message(sprintf("Wrote %s.", emp_paths$table))
   },
 
   figures = function() {
-    require_input(cleaned_path, "Rscript empirical/main.R clean")
-    source("shared/style.R")
+    require_input(emp_paths$cleaned, "Rscript empirical/main.R clean")
+    source("style.R")
     source("empirical/make_figures.R")
 
-    dir.create(dirname(figure_path), showWarnings = FALSE, recursive = TRUE)
-    ggsave(figure_path, make_empirical_figure(readRDS(cleaned_path)),
-           width = 6, height = 4.5, units = "in", dpi = 300)
-    message(sprintf("Wrote %s.", figure_path))
+    dir.create(dirname(emp_paths$figure), showWarnings = FALSE, recursive = TRUE)
+    ggsave(emp_paths$figure, make_empirical_figure(readRDS(emp_paths$cleaned)),
+           width = emp_figure_size$width, height = emp_figure_size$height,
+           units = "in", dpi = 300)
+    message(sprintf("Wrote %s.", emp_paths$figure))
   }
 )
 

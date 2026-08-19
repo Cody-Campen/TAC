@@ -1,10 +1,8 @@
-# test-slow-statistical.R -- the simulation pipeline, end to end
-# Checks the study's statistical claims rather than any one function, so
-# these need real replications and are gated behind RUN_SLOW_TESTS=true.
+# tests for generate_dataset(), fit_model() and compute_performance() in simulation/, end to end
 
 source_project("simulation/get_dataset.R")
 source_project("simulation/get_estimates.R")
-source_project("simulation/get_answers.R")
+source_project("simulation/get_performance.R")
 
 skip_unless_slow <- function() {
   skip_if_not(identical(Sys.getenv("RUN_SLOW_TESTS"), "true"),

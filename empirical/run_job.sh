@@ -5,9 +5,9 @@
 #
 # Usage: sbatch empirical/run_job.sh
 #
-# Real dataset must be reachable from the compute node: put
-# empirical/config/data_path.local.txt on the cluster filesystem first
-# -- see empirical/README.md.
+# Real dataset must be reachable from the compute node: copy
+# empirical/config/data_path.example.txt to data_path.local.txt there first,
+# or the pipeline warns and analyses the checked-in dummy data instead.
 
 #SBATCH --job-name=empirical
 #SBATCH --output=empirical/logs/slurm_%j.out

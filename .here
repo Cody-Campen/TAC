@@ -1,0 +1,4 @@
+Project root marker. Its here so the testthat r package works (and subsequently the tests)
+it is called by tests/testthat/helper-project.R
+testthat works from the tests/testthat directory where the test scripts are located, 
+so there needs to be a pain free way to call on folders outside of tests/testthat without hard coding a bunch of file directories (yuck).

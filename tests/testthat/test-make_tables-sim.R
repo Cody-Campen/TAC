@@ -1,8 +1,6 @@
-# test-make_tables-sim.R -- simulation/make_tables.R
-# Checks the generated LaTeX has a row per condition and stays structurally
-# consistent with its own header. The wording of the table is not pinned.
+# tests for make_sim_table() in simulation/make_tables.R
 
-source_project("shared/style.R")
+source_project("style.R")
 source_project("simulation/make_tables.R")
 
 body_rows <- function(tex) grep("\\\\\\\\$", tex, value = TRUE)

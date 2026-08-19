@@ -1,8 +1,6 @@
-# test-style.R -- shared/style.R
-# fmt() decides how every number in both tables is printed, so a change
-# here silently changes what the paper reports.
+# tests for fmt() in style.R
 
-source_project("shared/style.R")
+source_project("style.R")
 
 # Fixed decimals, not significant digits: APA tables need trailing zeros
 # kept ("0.950", not "0.95") so the columns line up.
