@@ -21,23 +21,21 @@ To bridge the gap between theory and methods---because this phrasing looks good 
 binged drinking by...---some number--- parameters characterizing...---the things we
 characterize---. 
 
-Drawing from evidence in...some binge-drinking applied literature...we conceptualize
-binge-drinking as...the empirical phenomena that make up binge-drinking...
+Drawing from previous work on binge-drinking we conceptualize
+binge-drinking as consisting of discrete drinking episodes of varying magnitude
+separated by a period of non-drinking \parencite{greenfield2000}.
 For example, TAC-derived features such as rise rate, peak concentration, and rise duration
 have been shown to predict alcohol-induced blackouts in college drinkers
 \parencite{richards2024}, and TAC signal processing models have been developed and validated
 against self-reported and breath alcohol concentration data in similar populations
 \parencite{kianersi2023}.
-Our model uses ideas from...---insert literature, ie michaelis menten
-or that one dynamical systems model of loneliness---
+Our model uses ideas from...---insert literature, ie michaelis menten---
 ...to characterize---the big picture formulation ie between drinking time, within episode
 duration, within episode drinking patterns---as a dynamical system. 
 Compared to previous models, ours provide interpretable parameters with mechanistic meanings.
 Furthermore, we are able to distinguish between the end of a drinking episode and 
-a return to baseline TAC. 
-We either
-if its not estimatable, some estimation routine speed up or contribution 
-if its actually fine, an in depth demonstration and evaluation of the model utility
+a return to baseline TAC. We show that the parameters can be recovered with typical
+TAC sample sizes.
 
 simulation demonstrate the accuracy of our method/software.
 
@@ -46,5 +44,51 @@ on binge-drinking in college students.
 
 the remainder of this paper is organized as follows: ---big long run-on sentence---
 
-\subsection{the model}
+\subsection{the criteria for a good model}
+We want the theory to achieve the following things:
+1. It should operationalized by mechanistic parameters that are directly actionable 
+by interventions.
 
+2. It should be able to recreate things like disproportionate next day drinking 
+consequences between males and females given similar rates. (ie AUC should be higher
+for people with lower metabolisms). If there have been disproportionate predictive validity
+in things like rise rate/fall rate/peak for predicting next day consequences based on sex,
+those same discontinuities should be accounted for by the metabolism difference. 
+
+
+
+
+\subsection{the theoretical model}
+
+While previous work has focused on mathematical modeling of between-person population
+dynamics \parencite{gruenewald1994,duffy1992}, we focus on creating a within-person
+model of binge-drinking.
+
+We want the model to capture the rate of entering an episode when in a 
+non-drinking episode, the rate of exiting an episode when in a drinking episode, 
+the within-episode dynamics, and the metabolism of alcohol.
+
+Let $S(t) \in [0, 1]$ be the state of the individual at time $t$, where $S(t) = 0$ 
+indicates a non-drinking episode and $S(t) = 1$ indicates a drinking episode. Our theory
+deconstructs binge-drinking into four components: the rate of entering a drinking
+episode, the rate of leaving a drinking episode, the within-episode ingestion rate,
+and the ethanol metabolism rate.
+
+This could be formalized by,
+ \begin{equation}
+ TAC(t) dt = S(t) I(t) - M(t).
+ \end{equation}
+Where $I(t)$ represents the alcohol ingestion rate at time $t$ and $M(t)$ represents the 
+metabolic rate at time $t$. S(t) acts as a switching function, turning the intake rate 
+function on or off depending on whether the individual is in a drinking episode or not.
+This is similar to previous work by \parencite{duffy1992} in that we model the time betweeen
+drinking episodes as exponential and the number of drinks within each episode as Poisson
+distributed. We extend this work by explicitly relating these distributions to TAC at time $t$
+through a two-state continuous Markov process to characterize the between-episode dynamics 
+and use of shot-noise process to characterize the within-episode dynamics.
+The switching function $S(t)$ is a two-state continuous Markov process with the 
+transition rates $q_{01}$ and $q_{10}$, representing the rates of entering and 
+exiting a drinking episode, respectively. 
+
+In line with previous research by \textcite{gruenewald1994}, we model S(t) such that the
+log odds of having a 

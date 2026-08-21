@@ -3,23 +3,21 @@
 #
 #     latexmk apa_template.tex
 #
-# Everything lands in .build/ -- aux files, the PDF, and the .synctex.gz --
-# and only the finished PDF is copied back beside apa_template.tex.
+# Aux files (.aux, .bbl, .log, .fls, .fff/.ttt, ...) land in .build/;
+# the PDF and its .synctex.gz are written at the root, beside
+# apa_template.tex. The root PDF is the canonical output -- there is no
+# copy step that can go stale -- and the .synctex.gz sits next to the
+# PDF it pairs with, which is what forward/inverse search needs.
 #
-# The PDF has to be built in .build/ too: pdflatex writes the SyncTeX file
-# next to its output PDF, and latexmk moves the pair together to $out_dir.
-# Keeping $out_dir at the root is what drags the .synctex.gz out here.
+# (pdflatex has no native -aux-directory; latexmk emulates the split by
+# building in .build/ and moving the PDF+SyncTeX pair out. That's its
+# default, long-supported behavior when $aux_dir != $out_dir.)
 
 $pdf_mode = 1;
 $synctex  = 1;             # so `latexmk -c` cleans the .synctex.gz
 
 $aux_dir  = '.build';
-$out_dir  = '.build';
-$out2dir  = '.';           # the committed copy of the PDF
-
-# Trims latexmk's out2 copy list (default: pdf, ps, synctex, synctex.gz)
-# down to the PDF, so the SyncTeX file stays with the PDF it pairs with.
-@out2_exts = ('pdf');
+$out_dir  = '.';
 
 $bibtex_use = 2;           # biblatex + biber, as apa_template.tex loads them
 
