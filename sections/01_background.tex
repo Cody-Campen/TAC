@@ -53,10 +53,14 @@ by interventions.
 consequences between males and females given similar rates. (ie AUC should be higher
 for people with lower metabolisms). If there have been disproportionate predictive validity
 in things like rise rate/fall rate/peak for predicting next day consequences based on sex,
-those same discontinuities should be accounted for by the metabolism difference. 
+those same discontinuities should be accounted for by the metabolism difference.
+
+3. It should be able to recreate the TAC "tail" behavior (is it linear or exponential?).
 
 
 
+
+ 
 
 \subsection{the theoretical model}
 
@@ -81,7 +85,7 @@ This could be formalized by,
 Where $I(t)$ represents the alcohol ingestion rate at time $t$ and $M(t)$ represents the 
 metabolic rate at time $t$. S(t) acts as a switching function, turning the intake rate 
 function on or off depending on whether the individual is in a drinking episode or not.
-This is similar to previous work by \parencite{duffy1992} in that we model the time betweeen
+This is similar to previous work by \parencite{duffy1992} in that we model the time between
 drinking episodes as exponential and the number of drinks within each episode as Poisson
 distributed. We extend this work by explicitly relating these distributions to TAC at time $t$
 through a two-state continuous Markov process to characterize the between-episode dynamics 
@@ -90,5 +94,13 @@ The switching function $S(t)$ is a two-state continuous Markov process with the
 transition rates $q_{01}$ and $q_{10}$, representing the rates of entering and 
 exiting a drinking episode, respectively. 
 
-In line with previous research by \textcite{gruenewald1994}, we model S(t) such that the
-log odds of having a 
+There are a few options for modeling $I(t) + M(t)$.
+First is the model proposed by \parencite{giraldo2017a}, which used a dampened spring 
+oscillator to model the return to equilibrium
+\begin{equation}
+    TAC(t) d^2t = -k^2TAC(t) - 2 \zeta k \frac{dTAC(t)}{dt} + k^2 \eta I(t),
+\end{equation}
+where $k > 0$ is the natural frequency of the oscillator, $\zeta > 1$ is the damping ratio, 
+and $\eta > 0$ is a scaling factor for the input function $I(t)$. One straightforward
+extension would be to model add a regime-switching component, so it handles the episodic
+nature of drinking.
