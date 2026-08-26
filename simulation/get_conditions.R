@@ -3,10 +3,9 @@
 
 #' Fully crosses the study's factors into one row per task.
 #'
-#' @param seed Integer vector of replication seeds, crossed with every
-#'   condition.
-#' @param n Numeric vector of sample sizes.
-#' @param b1 Numeric vector of true slopes.
+#' @param seed Integer vector of replication seeds.
+#' @param n Numeric vector of condition sample sizes.
+#' @param b1 Numeric vector of condition slopes.
 #' 
 #' @return Data frame with columns `seed`, `n`, `b1`, one row per task.
 make_design <- function(seed = 1:500,

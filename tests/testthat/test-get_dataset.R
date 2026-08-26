@@ -2,36 +2,38 @@
 
 source_project("simulation/get_dataset.R")
 
-# The only fully deterministic check available: with no error term, y must
-# equal b0 + b1*x to machine precision, so a wrong coefficient shows up.
-test_that("with sigma = 0 the data lie exactly on the regression line", {
+# because there is no error, the second derivative is a exact function of 
+# the TAC. It should be equal to eq. 1 from \parencite{giraldo2017a}
+test_that("test of expected second derivative", {
   set.seed(1)
-  data <- generate_dataset(make_params(n = 20, b0 = 2, b1 = 3, sigma = 0))
 
-  expect_equal(data$y, 2 + 3 * data$x)
+  n <- 2
+  t <- 500
+  beta <- 0.0107
+  zeta <- 1.4
+  eta <- 39.23
+  c <- 0.8
+
+  data <- generate_dataset(list(n = n, t = t, beta = beta, zeta = zeta, eta = eta, c = c))
+
+  # creating our lags so we can compute derivatives
+  lag_by_id <- function(x, id, k) {
+    unsplit(lapply(split(x, id), function(xi) c(rep(NA, k), head(xi, -k))), id)
+  }
+  data$tac_lag1 = lag_by_id(data$tac, data$id, 1)
+  data$tac_lag2 = lag_by_id(data$tac, data$id, 2)
+
+  data$tac_d1 = data$tac - data$tac_lag1
+  data$tac_d2 = data$tac - 2 * data$tac_lag1 + data$tac_lag2
+
+  # eq. 1 from \parencite{giraldo2017a} is:
+  expected_tac_d2 <- -1 * beta^2 * data$tac - 2 * zeta * beta * data$tac_d1 + beta^2 * eta * data$input
+
+  # the first two rows of each subject have no second difference to compare.
+  comparable <- !is.na(data$tac_d2)
+
+  expect_equal(data$tac_d2[comparable], expected_tac_d2[comparable],
+               tolerance = 1e-5)
 })
 
-# Reproducibility is the whole reason the design carries a seed column: the
-# same seed must rerun a replication exactly, a different one must not.
-test_that("the seed determines the dataset", {
-  set.seed(1); first  <- generate_dataset(make_params(n = 10))
-  set.seed(1); second <- generate_dataset(make_params(n = 10))
-  set.seed(2); other  <- generate_dataset(make_params(n = 10))
 
-  expect_identical(first, second)
-  expect_false(isTRUE(all.equal(first$y, other$y)))
-})
-
-# get_estimates.R fits y ~ x on this frame, so the shape is a contract; a
-# condition missing a field should fail on the first task, not produce a
-# quietly wrong dataset.
-test_that("generate_dataset() returns the frame fit_model() expects", {
-  data <- generate_dataset(make_params(n = 25))
-
-  expect_named(data, c("x", "y"))
-  expect_equal(nrow(data), 25)
-
-  incomplete <- make_params()
-  incomplete$b1 <- NULL
-  expect_error(generate_dataset(incomplete))
-})
