@@ -2,9 +2,8 @@
 
 source_project("simulation/make_figures.R")
 
-# Values have to land under the measure they came from. This is the one
-# way the figure can be quietly wrong: a mislabelled panel renders fine
-# and reports the wrong number.
+# Values have to land under the measure they came from.
+# A mislabelled panel renders fine and reports the wrong number.
 test_that("sim_results_long() keeps each value with its own measure", {
   results <- make_results(n = c(50, 100), bias = c(0.01, 0.02),
                           rmse = c(0.30, 0.40))
@@ -16,8 +15,8 @@ test_that("sim_results_long() keeps each value with its own measure", {
   expect_equal(long$value[long$measure == "RMSE"], c(0.30, 0.40))
 })
 
-# Facet order is the factor's level order, and the panels are meant to
-# read bias, RMSE, coverage, power rather than alphabetically.
+# Facet order is the factor's level order.
+# The panels read bias, RMSE, coverage, power rather than alphabetically.
 test_that("sim_results_long() fixes the panel order", {
   long <- sim_results_long(make_results())
 

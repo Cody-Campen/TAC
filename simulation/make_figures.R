@@ -1,18 +1,14 @@
 # make_figures.R
-# Builds the simulation results figure. simulation/main.R saves it to
-# simulation/figures/fig_sim.png, \includegraphics'd by
-# sections/03_simulation_results.tex.
-#
-# Pure -- theme_apa_minimal() comes from style.R.
+# Builds the simulation results figure for sections/03_simulation_results.tex.
+# theme_apa_minimal() comes from style.R.
 
 library(ggplot2)
 
-# Printed size in inches, handed to ggsave() by main.R. Kept here because
-# adding a facet row is what makes the figure need more height.
+# Printed size in inches, handed to ggsave() by main.R.
 sim_figure_size <- list(width = 6.5, height = 5)
 
-# Which measures get a panel, and how each is labelled. Adding a measure
-# here is the only change a new panel needs.
+# Which measures get a panel, and how each is labelled.
+# Adding an entry here is all a new panel needs.
 measure_labels <- c(
   bias     = "Bias",
   rmse     = "RMSE",
@@ -20,16 +16,8 @@ measure_labels <- c(
   power    = "Power"
 )
 
-#' Reshapes the results frame to one row per condition *and* measure.
-#'
-#' @param results Data frame from collect_performance(), one row per
-#'   condition with a column per measure.
-#' @param labels Named character vector mapping measure columns to panel
-#'   labels; its order sets the facet order.
-#' @return Data frame with columns `n`, factor `b1`, factor `measure`,
-#'   and numeric `value`.
-# Kept out of the plotting call so the facet labelling can be tested
-# without rendering anything.
+# Reshapes the results frame to one row per condition and measure.
+# Kept out of the plotting call so the facet labelling can be tested.
 sim_results_long <- function(results, labels = measure_labels) {
   do.call(rbind, lapply(names(labels), function(measure) {
     data.frame(
@@ -41,10 +29,7 @@ sim_results_long <- function(results, labels = measure_labels) {
   }))
 }
 
-#' Draws the faceted simulation results figure, one panel per measure.
-#'
-#' @param results Data frame from collect_performance(), one row per condition.
-#' @return A ggplot object.
+# Draws the faceted simulation results figure, one panel per measure.
 make_sim_figure <- function(results) {
   ggplot(sim_results_long(results), aes(x = n, y = value, color = b1, group = b1)) +
     geom_line(linewidth = 0.6) +

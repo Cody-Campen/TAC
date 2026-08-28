@@ -1,26 +1,41 @@
 # get_conditions.R
 # The design grid and the task_id -> params mapping.
 
-#' Fully crosses the study's factors into one row per task.
-#'
-#' @param seed Integer vector of replication seeds.
-#' @param n Numeric vector of condition sample sizes.
-#' @param b1 Numeric vector of condition slopes.
-#' 
-#' @return Data frame with columns `seed`, `n`, `b1`, one row per task.
-make_design <- function(seed = 1:500,
-                        n    = c(50, 100, 250),
-                        b1   = c(0, 0.2, 0.5)) {
-  expand.grid(seed = seed, n = n, b1 = b1, KEEP.OUT.ATTRS = FALSE)
+# Fully crosses the study's factors into one row per task.
+# Factor names match get_dataset()'s parameters.
+# The dynr-scale truths are appended, because get_performance() reads a term's
+# true value out of a column of this grid and get_estimates() now reports on
+# that scale. They are functions of the factors, not factors themselves.
+get_conditions <- function(seed = 1:5,
+                           n    = 2,
+                           t    = 500,
+                           beta = 0.0107,
+                           zeta = 1.4,
+                           eta  = 39.23,
+                           c    = 1,        # leave at 1; get_dataset() writes a bare 1 input
+                           epsilon = 0.01,
+                           dnoise = 0) {    # leave at 0; the draw has no process noise
+  design <- expand.grid(seed = seed, n = n, t = t, beta = beta, zeta = zeta,
+                        eta = eta, c = c, epsilon = epsilon, dnoise = dnoise,
+                        KEEP.OUT.ATTRS = FALSE)
+
+  cbind(design, dynr_truth(design))
 }
 
-#' Turns one row of the grid into the `params` list run_task() expects.
-#'
-#' @param design Data frame from make_design().
-#' @param task_id Single whole number in `1:nrow(design)`; anything else
-#'   is an error, since it arrives as a cluster array index.
-#' @param fixed Named list of the non-manipulated parameters (b0, sigma).
-#' @return Named list: the design row's columns, `task_id`, and `fixed`.
+# The dynr parameterisation of a set of structural parameters.
+# The Dirac drink enters as an initial velocity, so v0 is the impulse response
+# of the closed form get_dataset() draws from, differentiated at t = 0.
+dynr_truth <- function(params) {
+  data.frame(
+    restoring = -params$beta^2,
+    damping   = -2 * params$zeta * params$beta,
+    v0        = params$c * params$eta * params$beta^2,
+    mnoise    = params$epsilon^2
+  )
+}
+
+# Turns one row of the grid into the `params` list run_task() expects.
+# `task_id` arrives as a cluster array index, so anything out of range errors.
 params_for_task <- function(design, task_id, fixed = list()) {
   valid <- is.numeric(task_id) && length(task_id) == 1L && !is.na(task_id) &&
     task_id >= 1 && task_id <= nrow(design) && task_id == trunc(task_id)
@@ -31,7 +46,7 @@ params_for_task <- function(design, task_id, fixed = list()) {
          call. = FALSE)
   }
 
-  c(as.list(design[as.integer(task_id), ]),
-    list(task_id = as.integer(task_id)),
-    fixed)
+  base::c(as.list(design[as.integer(task_id), ]),
+          list(task_id = as.integer(task_id)),
+          fixed)
 }

@@ -1,13 +1,9 @@
 # main.R
-# The empirical pipeline: clean -> analyze -> tables -> figures. Naming
-# stages runs only those, so tables and figures can be rebuilt without
-# re-touching the raw data.
+# The empirical pipeline: clean -> analyze -> tables -> figures.
+# Naming stages runs only those.
 #
 #   Rscript empirical/main.R                   # every stage, in order
 #   Rscript empirical/main.R tables figures    # just the outputs
-#
-# The raw dataset is read in the clean stage and nowhere else; everything
-# after it reads only empirical/data/processed/.
 
 source("stages.R")
 source("empirical/paths.R")

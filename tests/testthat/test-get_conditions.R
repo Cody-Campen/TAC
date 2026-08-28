@@ -1,21 +1,21 @@
-# tests for make_design() and params_for_task() in simulation/get_conditions.R
+# tests for get_conditions() and params_for_task() in simulation/get_conditions.R
 
 source_project("simulation/get_conditions.R")
 
-# Seed varying fastest is what gives conditions common random numbers, and
-# it is the order run_jobs.sh indexes its array in.
-test_that("make_design() fully crosses the factors with seed varying fastest", {
-  design <- make_design(seed = 1:3, n = c(10, 20), b1 = 0)
+# Seed varies fastest, which gives conditions common random numbers.
+# It is also the order run_jobs.sh indexes its array in.
+test_that("get_conditions() fully crosses the factors with seed varying fastest", {
+  design <- get_conditions(seed = 1:3, n = c(10, 20), b1 = 0)
 
   expect_named(design, c("seed", "n", "b1"))
   expect_equal(design$seed, c(1, 2, 3, 1, 2, 3))
   expect_equal(design$n, c(10, 10, 10, 20, 20, 20))
 })
 
-# Pins the study design run_jobs.sh sizes its array from. Update
-# deliberately -- changing it invalidates everything in results/raw/.
+# Pins the study design run_jobs.sh sizes its array from.
+# Changing it invalidates everything in results/raw/.
 test_that("the current study design is 500 seeds x 3 sample sizes x 3 effects", {
-  design <- make_design()
+  design <- get_conditions()
 
   expect_equal(nrow(design), 4500)
   expect_equal(sort(unique(design$n)), c(50, 100, 250))
@@ -23,10 +23,10 @@ test_that("the current study design is 500 seeds x 3 sample sizes x 3 effects", 
   expect_equal(range(design$seed), c(1, 500))
 })
 
-# The array index is the only thing connecting a cluster task to its
-# condition, so an out-of-range id must stop rather than silently recycle.
+# The array index is the only thing connecting a task to its condition.
+# An out-of-range id must stop rather than silently recycle.
 test_that("params_for_task() maps ids onto grid rows and rejects bad ones", {
-  design <- make_design(seed = 1:3, n = c(10, 20), b1 = 0)
+  design <- get_conditions(seed = 1:3, n = c(10, 20), b1 = 0)
 
   first <- params_for_task(design, 1, fixed = list(b0 = 0, sigma = 1))
   expect_equal(first[c("seed", "n", "task_id")], list(seed = 1, n = 10, task_id = 1L))

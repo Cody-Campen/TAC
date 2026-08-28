@@ -2,10 +2,8 @@
 
 source_project("empirical/functions/analyze_data.R")
 
-# y = 10 + 2*x1 + 5*d + e, with e orthogonal to every column of the design
-# matrix, so OLS returns the construction coefficients exactly. x1 has the
-# same mean in both groups, so SE(x1) = sqrt(s^2/Sxx) separates cleanly:
-# SSE = 8, df = 5, s^2 = 1.6, Sxx = 10 -> SE(x1) = 0.4. R^2 = 1 - 8/98.
+# y = 10 + 2*x1 + 5*d + e, with e orthogonal to the design matrix.
+# SSE = 8, df = 5, s^2 = 1.6, Sxx = 10 -> SE(x1) = 0.4, R^2 = 1 - 8/98.
 worked_example <- function() {
   make_cleaned(
     x1    = c(1, 2, 3, 4, 1, 2, 3, 4),
@@ -16,8 +14,7 @@ worked_example <- function() {
 
 coef_row <- function(estimates, term) estimates[estimates$term == term, ]
 
-# The estimator itself: coefficients and their SEs must match the algebra
-# above, not a second lm() call.
+# Coefficients and SEs must match the algebra above, not a second lm() call.
 test_that("analyze_dataset() recovers the hand-computed fit", {
   results <- analyze_dataset(worked_example())
   est <- results$estimates
@@ -29,8 +26,8 @@ test_that("analyze_dataset() recovers the hand-computed fit", {
   expect_equal(results$r_squared, 0.9183673469387755, tolerance = 1e-9)
 })
 
-# make_tables.R maps these exact term names to display labels, so a new
-# predictor has to be added there too; this is what says so.
+# make_tables.R maps these exact term names to display labels.
+# A new predictor has to be added there too.
 test_that("the results carry the terms and columns make_tables.R reads", {
   results <- analyze_dataset(worked_example())
 
@@ -40,9 +37,8 @@ test_that("the results carry the terms and columns make_tables.R reads", {
                   %in% names(results$estimates)))
 })
 
-# analyze_data.R passes model = FALSE to keep results.rds small; if that is
-# dropped the saved object silently starts carrying the whole dataset.
-# Checked by name because `fit$x` would partial-match `xlevels`.
+# analyze_data.R passes model = FALSE to keep results.rds small.
+# Checked by name, because `fit$x` would partial-match `xlevels`.
 test_that("the fitted object does not retain the data", {
   fit <- analyze_dataset(worked_example())$fit
 

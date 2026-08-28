@@ -1,18 +1,9 @@
 # stages.R
-# The stage dispatcher both pipelines share. A main.R defines its stages
-# as a named list in pipeline order and hands it to run_stages(); the
-# command line names which of them to run.
+# The stage dispatcher both pipelines share.
+# A main.R defines its stages in pipeline order and hands them to run_stages().
 
-#' Runs the requested stages, always in the order `stages` lists them.
-#'
-#' @param requested Character vector of stage names; empty, or the single
-#'   string "all", means every stage.
-#' @param stages Named list of zero-argument functions, in pipeline order.
-#' @param usage Single string of usage text, appended to the error message
-#'   when a requested stage is unknown.
-#' @return Character vector of the stages that ran, invisibly.
-# Order is fixed by `stages`, not by the command line, so
-# `main.R figures results` cannot draw a figure from a stale results file.
+# Runs the requested stages, always in the order `stages` lists them.
+# Order is fixed by `stages` rather than by the command line.
 run_stages <- function(requested, stages, usage = "") {
   if (length(requested) == 0L || identical(requested, "all")) {
     requested <- names(stages)
@@ -34,13 +25,8 @@ run_stages <- function(requested, stages, usage = "") {
   invisible(to_run)
 }
 
-#' Stops with a stage-aware message if a stage's input file is missing.
-#'
-#' @param path Single string; the file the calling stage is about to read.
-#' @param produced_by Single string naming the command that creates `path`.
-#' @return `path` invisibly, if it exists.
-# Named so a stage run out of order says which stage to run first, rather
-# than failing with a bare "cannot open connection" from readRDS().
+# Stops with a stage-aware message if a stage's input file is missing.
+# It names the stage to run first, rather than failing inside readRDS().
 require_input <- function(path, produced_by) {
   if (!file.exists(path)) {
     stop(sprintf("%s not found -- run `%s` first.", path, produced_by),

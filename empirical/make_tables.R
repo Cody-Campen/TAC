@@ -1,25 +1,16 @@
 # make_tables.R
-# Builds the regression table as LaTeX lines. empirical/main.R writes
-# them to empirical/tables/tab_empirical.tex, \input by
-# sections/05_empirical_results.tex.
-#
-# Pure -- fmt() comes from style.R, which main.R sources first.
+# Builds the regression table for sections/05_empirical_results.tex.
+# fmt() comes from style.R, which main.R sources first.
 
-# Display labels for the model's terms. A predictor added to
-# analyze_dataset() needs an entry here or it prints its raw name.
+# Display labels for the model's terms.
+# A term without an entry here prints its raw name.
 term_labels <- c(
   "(Intercept)"    = "Intercept",
   "x1"             = "$X_1$",
   "grouptreatment" = "Treatment"
 )
 
-#' Builds the empirical regression table as LaTeX lines.
-#'
-#' @param results Named list from analyze_dataset(), supplying
-#'   `estimates`, `n`, and `r_squared`.
-#' @param labels Named character vector mapping model terms to display
-#'   labels; a term without an entry prints its raw name.
-#' @return Character vector of LaTeX lines, one per element.
+# Builds the empirical regression table as LaTeX lines.
 make_empirical_table <- function(results, labels = term_labels) {
   est <- results$estimates
 

@@ -1,14 +1,9 @@
 # main.R
-# Post-processing for the simulation study: harvest the per-task results,
-# then build the table and the figure. Run after run_jobs.sh finishes.
-# Naming stages runs only those, so a figure tweak does not re-harvest
-# 4500 files.
+# Post-processing for the simulation study: results, then table and figure.
+# Run it after run_jobs.sh finishes.
 #
 #   Rscript simulation/main.R           # every stage, in order
 #   Rscript simulation/main.R figures   # just the figure
-#
-# The per-task path is not here -- that is run_sim.R, one process per
-# array element.
 
 source("stages.R")
 source("simulation/paths.R")
@@ -20,9 +15,8 @@ stages <- list(
     source("simulation/get_conditions.R")
     source("simulation/get_performance.R")
 
-    # make_design() sizes run_jobs.sh's array, so its row count is also
-    # the number of task files a complete run leaves behind.
-    results <- collect_performance(sim_paths$raw, expected = nrow(make_design()))
+    # The design's row count is how many task files a complete run leaves.
+    results <- collect_performance(sim_paths$raw, expected = nrow(get_conditions()))
 
     dir.create(dirname(sim_paths$results), showWarnings = FALSE, recursive = TRUE)
     saveRDS(results, sim_paths$results)

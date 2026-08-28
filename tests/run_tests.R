@@ -1,12 +1,9 @@
 #!/usr/bin/env Rscript
 # run_tests.R
-# Runs the whole suite. Every test file in tests/testthat/ is picked up
-# automatically -- adding a test never means editing this file.
+# Runs the whole suite from the project root.
+# Every test file in tests/testthat/ is picked up automatically.
 #
-#   Rscript tests/run_tests.R                      # fast suite (seconds)
-#   RUN_SLOW_TESTS=true Rscript tests/run_tests.R  # + statistical tests
-#
-# Run it from the project root, like every other script here.
+#   Rscript tests/run_tests.R
 
 if (!dir.exists("tests/testthat")) {
   stop("run this from the project root: Rscript tests/run_tests.R", call. = FALSE)
@@ -14,17 +11,11 @@ if (!dir.exists("tests/testthat")) {
 
 library(testthat)
 
-# Attached here, quietly, only to keep "package 'broom' was built under R
-# version x.y.z" from being counted as a test warning on every run. Drop
-# this line once the installed broom matches your R version.
+# Attached quietly to keep broom's build-version warning out of the results.
 suppressWarnings(library(broom))
 
-#' Runs every test file in tests/testthat/, stopping on the first failure.
-#'
-#' @return test_dir()'s results, invisibly.
-# There is no DESCRIPTION here to declare the testthat edition, so ask for
-# the 3rd explicitly. local_edition() unwinds when its calling frame exits,
-# so the tests have to run inside that same frame -- hence the function.
+# Runs every test file, stopping on the first failure.
+# local_edition() unwinds with its calling frame, so the tests run inside one.
 run_suite <- function() {
   local_edition(3)
   test_dir("tests/testthat", stop_on_failure = TRUE)

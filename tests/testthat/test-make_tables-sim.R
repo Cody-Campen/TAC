@@ -5,8 +5,8 @@ source_project("simulation/make_tables.R")
 
 body_rows <- function(tex) grep("\\\\\\\\$", tex, value = TRUE)
 
-# One condition in, one row out -- a grouping bug upstream shows up here
-# as a table with the wrong number of lines in it.
+# One condition in, one row out.
+# A grouping bug upstream shows up here as the wrong number of lines.
 test_that("make_sim_table() writes one body row per condition", {
   tex <- make_sim_table(make_results(n = c(50, 100, 250)))
 
@@ -15,9 +15,8 @@ test_that("make_sim_table() writes one body row per condition", {
   expect_true(any(grepl("^ +50 & 0.50 & 0.010", rows)))
 })
 
-# The sprintf() format string and the column spec are written out
-# separately, so adding a measure to one and not the other produces a
-# table LaTeX refuses to compile.
+# The sprintf() format string and the column spec are written separately.
+# Adding a measure to one and not the other breaks the LaTeX.
 test_that("every body row has as many columns as the header", {
   tex <- make_sim_table(make_results())
 

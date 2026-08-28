@@ -1,55 +1,68 @@
 # get_performance.R
-# Collapses one condition's per-replication estimates into standard
-# performance measures. `estimates` is fit_model()'s row-bound output
-# (see run_task.R); `params` supplies the true value to judge against.
+# Collapses per-replication estimates into performance measures.
+# Every measure is computed within `term`.
 
-#' Collapses one condition's replications into performance measures.
-#'
-#' @param estimates Data frame of fit_model()'s row-bound output for a
-#'   single condition, including the logical `converged` column.
-#' @param params Named list supplying the numeric scalars `n` and `b1`,
-#'   `b1` being the true value the estimates are judged against.
-#' @return One-row data frame: `n`, `b1`, `nsim`, `convergence`, `bias`,
-#'   `rel_bias`, `rmse`, `coverage`, `power`.
-# Every measure but `convergence` is computed over converged replications
-# only.
-compute_performance <- function(estimates, params) {
-  true_val <- params$b1
+# The parameters get_estimates() reports, in table order.
+# Each must also name a column in the raw data, which holds its true value.
+sim_terms <- c("restoring", "damping", "v0", "mnoise", "dnoise")
 
-  converged <- estimates[estimates$converged, ]
-  n_converged <- nrow(converged)
+# Collapses one condition's replications into performance measures.
+# There is one row per parameter, not one per condition.
+get_performance <- function(estimates, params, terms = sim_terms) {
+  rows <- lapply(terms, function(term) {
+    term_rows(estimates[estimates$term == term, ], term, params[[term]])
+  })
 
-  bias      <- mean(converged$estimate - true_val)
-  rel_bias  <- bias / true_val
-  rmse      <- sqrt(mean((converged$estimate - true_val)^2))
-  coverage  <- mean(converged$conf.low <= true_val & true_val <= converged$conf.high)
-  power     <- mean(converged$conf.low > 0 | converged$conf.high < 0)
+  do.call(rbind, rows)
+}
+
+# The performance measures for a single parameter.
+# Split out so get_performance() reads as one row per term.
+term_rows <- function(est, term, truth) {
+  if (is.null(truth)) {
+    stop("no true value supplied for '", term, "'", call. = FALSE)
+  }
+
+  # Every measure but `convergence` uses converged replications only.
+  nsim      <- nrow(est)
+  converged <- est[est$converged, ]
+  error     <- converged$estimate - truth
+
+  # A condition in which every fit failed has nothing to average.
+  # Report NA rather than the NaN mean(numeric(0)) gives.
+  if (nrow(converged) == 0L) {
+    return(data.frame(
+      term = term, truth = truth, nsim = nsim, convergence = 0,
+      bias = NA_real_, rel_bias = NA_real_, rmse = NA_real_,
+      emp_se = NA_real_, avg_se = NA_real_, coverage = NA_real_,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  bias <- mean(error)
 
   data.frame(
-    n              = params$n,
-    b1             = params$b1,
-    nsim           = nrow(estimates),
-    convergence    = n_converged / nrow(estimates),
-    bias           = bias,
-    rel_bias       = rel_bias,
-    rmse           = rmse,
-    coverage       = coverage,
-    power          = power
+    term        = term,
+    truth       = truth,
+    nsim        = nsim,
+    convergence = nrow(converged) / nsim,
+    bias        = bias,
+    # Guarded because relative bias is undefined at a true value of zero.
+    rel_bias    = if (truth == 0) NA_real_ else bias / truth,
+    rmse        = sqrt(mean(error^2)),
+    # The estimates' own spread, to be read against the SEs the model reports.
+    emp_se      = stats::sd(converged$estimate),
+    avg_se      = mean(converged$std.error, na.rm = TRUE),
+    # Wald coverage is not valid for dnoise, whose true value of 0 is a boundary.
+    coverage    = mean(converged$conf.low <= truth & truth <= converged$conf.high,
+                       na.rm = TRUE),
+    stringsAsFactors = FALSE
   )
 }
 
-#' Harvests every per-task file in `raw_dir` into one row per condition.
-#'
-#' @param raw_dir Single string; directory holding the array's per-task
-#'   .rds files. Supplied by the caller from paths.R.
-#' @param expected Single number, the design's task count, or NULL to
-#'   skip the completeness check.
-#' @return Data frame of performance measures, one row per condition,
-#'   ordered by `n` then `b1`.
-# Passing `expected` turns a partly finished array -- a task that failed
-# and was never resubmitted -- into an error, instead of results quietly
-# computed from fewer replications than the paper claims.
-collect_performance <- function(raw_dir, expected = NULL) {
+# Harvests every per-task file in `raw_dir` into one row per condition and term.
+# Passing `expected` turns a partly finished array into an error.
+collect_performance <- function(raw_dir, expected = NULL, terms = sim_terms) {
   raw_files <- list.files(raw_dir, pattern = "\\.rds$", full.names = TRUE)
 
   if (length(raw_files) == 0L) {
@@ -64,12 +77,41 @@ collect_performance <- function(raw_dir, expected = NULL) {
 
   raw <- do.call(rbind, lapply(raw_files, readRDS))
 
-  conditions <- split(raw, list(raw$n, raw$b1), drop = TRUE)
+  by <- condition_cols(raw)
+  conditions <- split(raw, raw[by], drop = TRUE)
+
   results <- do.call(rbind, lapply(conditions, function(cond) {
-    compute_performance(cond, list(n = cond$n[1], b1 = cond$b1[1]))
+    cbind(cond[rep(1L, length(terms)), by, drop = FALSE],
+          get_performance(cond, condition_params(cond), terms = terms),
+          row.names = NULL)
   }))
 
-  results <- results[order(results$n, results$b1), ]
+  # Ordered by `terms` rather than alphabetically, which is how the tables read.
+  results <- results[do.call(order, c(results[by],
+                                      list(match(results$term, terms)))), ]
   rownames(results) <- NULL
   results
+}
+
+# Columns get_estimates() and run_task() write on every row.
+# Whatever else run_task() tagged the rows with is the design grid.
+result_cols <- c("term", "estimate", "std.error", "conf.low", "conf.high",
+                 "converged", "seed")
+
+# The columns of the raw results that identify a condition.
+condition_cols <- function(raw) {
+  by <- setdiff(names(raw), result_cols)
+
+  if (length(by) == 0L) {
+    stop("no condition columns in the raw results -- does run_task() still ",
+         "tag its rows with the design grid?", call. = FALSE)
+  }
+
+  by
+}
+
+# The true parameter values of one condition, taken from its first row.
+# The grid holds what get_dataset() generated from, so its columns are truth.
+condition_params <- function(cond) {
+  as.list(cond[1L, condition_cols(cond), drop = FALSE])
 }

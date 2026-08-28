@@ -1,15 +1,8 @@
 # make_tables.R
-# Builds the simulation results table as LaTeX lines. simulation/main.R
-# writes them to simulation/tables/tab_sim.tex, \input by
-# sections/03_simulation_results.tex.
-#
-# Pure -- fmt() comes from style.R, which main.R sources first.
+# Builds the simulation results table for sections/03_simulation_results.tex.
+# fmt() comes from style.R, which main.R sources first.
 
-#' Builds the simulation results table as LaTeX lines.
-#'
-#' @param results Data frame from collect_performance(), one row per
-#'   condition, supplying `n`, `b1`, and the measure columns.
-#' @return Character vector of LaTeX lines, one per element.
+# Builds the simulation results table as LaTeX lines.
 make_sim_table <- function(results) {
   rows <- sprintf(
     "%d & %s & %s & %s & %s & %s & %s \\\\",

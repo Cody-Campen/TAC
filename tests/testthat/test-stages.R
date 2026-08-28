@@ -11,8 +11,8 @@ recording_stages <- function(log) {
   )
 }
 
-# Bare `Rscript main.R` is the everyday invocation and has to mean the
-# whole pipeline; run_jobs.sh chains exactly that.
+# Bare `Rscript main.R` has to mean the whole pipeline.
+# run_jobs.sh chains exactly that.
 test_that("naming no stage runs all of them in pipeline order", {
   log <- new.env(); log$ran <- character()
 
@@ -21,9 +21,8 @@ test_that("naming no stage runs all of them in pipeline order", {
   expect_equal(log$ran, c("first", "second", "third"))
 })
 
-# Stages consume each other's output files, so the list order wins over
-# the order typed -- otherwise `main.R figures results` would draw a
-# figure from the previous run's results and look like it worked.
+# Stages consume each other's output files, so the list order wins.
+# Otherwise `main.R figures results` would draw a figure from stale results.
 test_that("requested stages run in pipeline order, not the order given", {
   log <- new.env(); log$ran <- character()
 
@@ -32,8 +31,7 @@ test_that("requested stages run in pipeline order, not the order given", {
   expect_equal(log$ran, c("first", "third"))
 })
 
-# A typo must stop before anything runs, rather than doing part of the
-# pipeline and then failing.
+# A typo must stop before anything runs.
 test_that("an unknown stage errors without running anything", {
   log <- new.env(); log$ran <- character()
 

@@ -4,8 +4,8 @@ source_project("simulation/get_dataset.R")
 source_project("simulation/get_estimates.R")
 source_project("simulation/run_task.R")
 
-# collect_performance() reads results/raw/ with list.files() and groups by the
-# condition columns, so both the zero-padded name and the tags matter.
+# collect_performance() reads results/raw/ and groups by the condition columns.
+# Both the zero-padded name and the tags matter.
 test_that("run_task() writes one padded, tagged file per task", {
   out_dir <- withr::local_tempdir()
 
@@ -24,8 +24,7 @@ test_that("run_task() writes one padded, tagged file per task", {
                   %in% names(result)))
 })
 
-# The resubmission story rests on this: sbatch --array=<id> on a failed
-# task must not redo the ones that already succeeded.
+# sbatch --array=<id> on a failed task must not redo its neighbours.
 test_that("run_task() leaves an already-finished task alone", {
   out_dir <- withr::local_tempdir()
   saveRDS("existing result", task_file(out_dir, 3))
@@ -35,8 +34,8 @@ test_that("run_task() leaves an already-finished task alone", {
   expect_equal(readRDS(task_file(out_dir, 3)), "existing result")
 })
 
-# Seeding happens inside run_task(), so a rerun in a fresh directory has to
-# reproduce the replication exactly -- that is what makes the study rerunnable.
+# Seeding happens inside run_task().
+# A rerun in a fresh directory has to reproduce the replication exactly.
 test_that("the same task run twice produces the same result", {
   params <- make_params(n = 20, seed = 123, task_id = 1)
   first_dir  <- withr::local_tempdir()
