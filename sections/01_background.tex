@@ -104,3 +104,9 @@ where $k > 0$ is the natural frequency of the oscillator, $\zeta > 1$ is the dam
 and $\eta > 0$ is a scaling factor for the input function $I(t)$. One straightforward
 extension would be to model add a regime-switching component, so it handles the episodic
 nature of drinking.
+
+It's the Kalman prediction-error decomposition, summed over the 5 ids:
+
+$$-2\log L=\sum_{i=1}^{n}\sum_{t=0}^{T-1}\left[\log 2\pi+\log F_{it}+\frac{v_{it}^2}{F_{it}}\right]$$
+
+with $v_{it}=y_{it}-Hx_{it|t-1}$ and $F_{it}=HP_{it|t-1}H'+\texttt{mnoise}$. Discretisation is exact via Van Loan: $A_d=e^{A\Delta t}$, and $Q_d$ from the $\exp$ of $\begin{bmatrix}-A&Q_c\0&A'\end{bmatrix}\Delta t$. Order per step is update-then-predict, with the $t=0$ observation included.

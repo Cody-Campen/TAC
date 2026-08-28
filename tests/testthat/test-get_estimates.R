@@ -147,8 +147,78 @@ test_that("the ODE implied by the estimates reproduces the true ODE trajectory",
 })
 
 test_that("dynr's estimate align with hand-calculated estimates", {
-  # get the likelihood
+  skip_if_not_installed("Matrix")
 
+  dynr_est <- stats::setNames(estimates$estimate, estimates$term)
+
+  # -2 log likelihood calculation function
+  m2ll <- function(theta, dnoise = dynr_est[["dnoise"]], data = dataset$data) {
+    restoring <- -exp(theta[[1]])
+    damping   <- -exp(theta[[2]])
+    mnoise    <-  exp(theta[[3]])
+    v0        <-  theta[[4]]
+
+    drift <- matrix(c(0, 1, restoring, damping), 2, 2, byrow = TRUE)
+    load  <- matrix(c(1, 0), 1, 2)
+
+    # dynr replaces zero variances with 1e-6
+    diffusion <- diag(c(1e-6, dnoise), 2)
+    inicov    <- diag(1e-6, 2)
+
+    # Van Loan (1978): exact discretisation of the drift and the diffusion.
+    block <- rbind(cbind(-drift, diffusion),
+                   cbind(matrix(0, 2, 2), t(drift)))
+    expo  <- as.matrix(Matrix::expm(block))
+    transition   <- t(expo[3:4, 3:4])
+    process_cov  <- transition %*% expo[1:2, 3:4]
+
+    # Kalman prediction-error decomposition, one pass per subject.
+    total <- 0
+    for (subject in unique(data$id)) {
+      tac   <- data$tac[data$id == subject]
+      state <- matrix(c(0, v0), 2, 1)
+      cov   <- inicov
+
+      for (k in seq_along(tac)) {
+        error   <- tac[k] - drop(load %*% state)
+        err_var <- drop(load %*% cov %*% t(load)) + mnoise
+        total   <- total + log(2 * pi) + log(err_var) + error^2 / err_var
+
+        gain  <- cov %*% t(load) / err_var
+        state <- state + gain * error
+        cov   <- cov - gain %*% load %*% cov
+
+        state <- transition %*% state
+        cov   <- transition %*% cov %*% t(transition) + process_cov
+      }
+    }
+
+    total
+  }
+
+  at_dynr <- c(log(-dynr_est[["restoring"]]), log(-dynr_est[["damping"]]),
+               log(dynr_est[["mnoise"]]), dynr_est[["v0"]])
+
+  # Optimised from the same start dynr got, it has to find the same optimum.
+  inits <- dataset$inits
+  start <- c(log(-inits[["restoring"]]), log(-inits[["damping"]]),
+             log(inits[["mnoise"]]), inits[["v0"]])
+
+  hand <- stats::optim(start, m2ll, method = "BFGS",
+                       control = list(maxit = 500, reltol = 1e-12))
+
+  expect_equal(hand$convergence, 0L)
+
+  hand_est <- c(restoring = -exp(hand$par[[1]]), damping = -exp(hand$par[[2]]),
+                mnoise = exp(hand$par[[3]]), v0 = hand$par[[4]])
+
+  # relative error in the parameter estimates
+  rel_error <- abs(hand_est / dynr_est[names(hand_est)] - 1)
+  expect_lt(max(rel_error), 0.05)
+
+  # Where the two optimisers actually stopped is the sharper statement: they
+  # have to sit at the same height, well inside a 1-df chi-square of 3.84.
+  expect_lt(abs(m2ll(hand$par) - m2ll(at_dynr)), 0.5)
 })
   
 
