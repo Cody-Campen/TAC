@@ -1,11 +1,9 @@
-% notation_table.tex
-% Table of notation used throughout the manuscript.
+% notation_table.tex -- GENERATED FILE, DO NOT EDIT BY HAND.
 %
-% Pulled into the appendix by appendix.tex. Keep one row per symbol, and keep
-% the rows in the order the symbols are introduced in the body -- a reader
-% scanning for a symbol they just met reads top-down.
-%
-% Add a row as:  $\symbol$ & Description of the symbol \\
+% Written by make_notation.py from notation.tsv, with the rows restricted to
+% the symbols actually used in the body and ordered by first use within each
+% group. To change a description or a category, edit notation.tsv and rebuild.
+% Hand edits here are overwritten on the next compile.
 
 \begin{table}[htbp]
 \centering
@@ -14,33 +12,33 @@
 \begin{threeparttable}
 \begin{tabular}{ll}
 \toprule
-Symbol       & Description \\
+Symbol & Description \\
 \midrule
-$TAC(t)$     & Transdermal alcohol concentration at time $t$ \\
-$I(t)$       & Alcohol ingestion (intake) rate at time $t$ \\
-$M(t)$       & Alcohol metabolism (elimination) rate at time $t$ \\
-$S(t)$       & Two-state switching process; $1$ within a drinking episode, $0$ otherwise \\
-$q_{01}$     & Transition rate for entering a drinking episode \\
-$q_{10}$     & Transition rate for exiting a drinking episode \\
-$k$          & Natural frequency of the damped oscillator, $k > 0$ \\
-$\zeta$      & Damping ratio, $\zeta > 1$ \\
-$\eta$       & Scaling factor on the input function $I(t)$, $\eta > 0$ \\
-$x_{it|t-1}$ & One-step-ahead predicted latent state for person $i$ at time $t$ \\
-$P_{it|t-1}$ & One-step-ahead predicted state covariance for person $i$ at time $t$ \\
-$y_{it}$     & Observed measurement for person $i$ at time $t$ \\
-$H$          & Measurement (loading) matrix mapping latent states to observations \\
-$v_{it}$     & Prediction error (innovation), $y_{it} - H x_{it|t-1}$ \\
-$F_{it}$     & Prediction error variance, $H P_{it|t-1} H' + \texttt{mnoise}$ \\
-$A$          & Continuous-time drift matrix \\
-$Q_c$        & Continuous-time process noise covariance \\
-$A_d, Q_d$   & Discrete-time drift and process noise over the interval $\Delta t$ \\
-$\Delta t$   & Interval between successive measurement occasions \\
+\multicolumn{2}{l}{\textit{Indices}} \\
+$t$ & Time (measurement occasion) \\
+$i$ & Person \\
+$\Delta t$ & Interval between successive measurement occasions \\
+\addlinespace
+\multicolumn{2}{l}{\textit{Variables}} \\
+$S(t)$ & Two-state switching process; $1$ within a drinking episode, $0$ otherwise \\
+$TAC(t)$ & Transdermal alcohol concentration at time $t$ \\
+$I(t)$ & Alcohol ingestion (intake) rate at time $t$ \\
+$M(t)$ & Alcohol metabolism (elimination) rate at time $t$ \\
+$v_{it}$ & Prediction error (innovation), $y_{it} - H x_{it|t-1}$ \\
+$y_{it}$ & Observed measurement for person $i$ at time $t$ \\
+$x_{it|t-1}$ & One-step-ahead predicted latent state (position, velocity) \\
+$F_{it}$ & Prediction error variance, $H P_{it|t-1} H' + \sigma^2_{\epsilon}$ \\
+$P_{it|t-1}$ & One-step-ahead predicted state covariance \\
+\addlinespace
+\multicolumn{2}{l}{\textit{Parameters}} \\
+$q_{01}, q_{10}$ & Transition rates between drinking-episode states \\
+$k$ & Natural frequency of the damped oscillator, $k > 0$ (\texttt{beta} in the simulation code) \\
+$\zeta$ & Damping ratio, $\zeta > 1$ \\
+$\eta$ & Scaling factor on the input function $I(t)$, $\eta > 0$ \\
+$H$ & Measurement (loading) matrix mapping latent states to observations \\
+$A$ & Continuous-time drift matrix \\
+$Q_c$ & Continuous-time process noise covariance \\
 \bottomrule
 \end{tabular}
-\begin{tablenotes}[flushleft]
-\small
-\item \textit{Note.} Subscript $i$ indexes person and subscript $t$ indexes
-measurement occasion throughout.
-\end{tablenotes}
 \end{threeparttable}
 \end{table}

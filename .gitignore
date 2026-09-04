@@ -37,3 +37,6 @@ dynrtmp/
 
 # recovery plots written by the test suite
 tests/testthat/figures/
+
+# make_notation.py leaves these behind when imported for testing
+__pycache__/

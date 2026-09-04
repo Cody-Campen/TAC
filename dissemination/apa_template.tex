@@ -8,11 +8,29 @@
 
 % ---------- Math & graphics ----------
 \usepackage{amsmath}
+\usepackage{bm} % Bold math for vectors and matrices
 \usepackage{newtxtext,newtxmath} % Times new roman + times new roman math
 \usepackage{csquotes}
 
 % ---------- Tables and Figures ----------
 \usepackage{cleveref}
+
+% ---------- Link appearance ----------
+% apa7 loads hyperref with no options, whose default is an unfilled red
+% annotation box around every internal link. colorlinks swaps those boxes for
+% colored text. Set any of these to black to make a link type invisible in
+% print while it stays clickable.
+%
+% hyperref cannot tell a \Cref from a \gls -- both are the "link" type -- so
+% suppressing notation links (if glossaries is ever adopted) is done on the
+% glossaries side with \glsdisablehyper, not here.
+\definecolor{linknavy}{RGB}{0,51,102}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = linknavy,   % \ref, \Cref, equations, figures, tables
+  citecolor  = linknavy,   % \parencite, \textcite
+  urlcolor   = linknavy,
+}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{threeparttable}
@@ -95,6 +113,6 @@
 \printbibliography
 
 % ---------- Appendices ----------
-\input{appendix}
+\input{appendix/appendix}
 
 \end{document}

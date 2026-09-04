@@ -1,0 +1,43 @@
+symbol	group	shape	description
+# notation.tsv -- the hand-authored source for the notation table.
+#
+# make_notation.py scans the body .tex files for symbols, joins them against
+# this file, and writes notation_table.tex. A symbol used in the body with no
+# row here fails the build; a row here whose symbol is never used is dropped
+# from the table with a warning.
+#
+# Columns are TAB separated. Lines starting with # are ignored.
+#
+#   symbol       As written in the body, without the surrounding $. This is
+#                matched on the BASE symbol, so a row for "q" covers q_{01}
+#                and q_{10}; give them separate rows only if you want separate
+#                table lines, in which case write the full form.
+#   group        index | variable | parameter. Sets which block of the table
+#                the row lands in. Order WITHIN a block follows first use in
+#                the body, so it is not specified here.
+#   shape        Conformability metadata for the equation checker. Either
+#                "scalar" or ROWSxCOLS, e.g. 2x1. Not printed in the table.
+#   description  The table cell. May contain math and LaTeX markup.
+
+t	index	scalar	Time (measurement occasion)
+i	index	scalar	Person
+\Delta t	index	scalar	Interval between successive measurement occasions
+
+TAC(t)	variable	scalar	Transdermal alcohol concentration at time $t$
+I(t)	variable	scalar	Alcohol ingestion (intake) rate at time $t$
+M(t)	variable	scalar	Alcohol metabolism (elimination) rate at time $t$
+S(t)	variable	scalar	Two-state switching process; $1$ within a drinking episode, $0$ otherwise
+y_{it}	variable	1x1	Observed measurement for person $i$ at time $t$
+x_{it|t-1}	variable	2x1	One-step-ahead predicted latent state (position, velocity)
+P_{it|t-1}	variable	2x2	One-step-ahead predicted state covariance
+v_{it}	variable	1x1	Prediction error (innovation), $y_{it} - H x_{it|t-1}$
+F_{it}	variable	1x1	Prediction error variance, $H P_{it|t-1} H' + \sigma^2_{\epsilon}$
+
+k	parameter	scalar	Natural frequency of the damped oscillator, $k > 0$ (\texttt{beta} in the simulation code)
+\zeta	parameter	scalar	Damping ratio, $\zeta > 1$
+\eta	parameter	scalar	Scaling factor on the input function $I(t)$, $\eta > 0$
+q_{01}, q_{10}	parameter	scalar	Transition rates between drinking-episode states
+A	parameter	2x2	Continuous-time drift matrix
+Q_c	parameter	2x2	Continuous-time process noise covariance
+H	parameter	1x2	Measurement (loading) matrix mapping latent states to observations
+\sigma	parameter	scalar	Measurement error standard deviation
