@@ -1,0 +1,28 @@
+% appendix.tex
+% Appendices, in the order they should appear.
+%
+% Everything after \appendix is lettered (Appendix A, B, ...) rather than
+% numbered, so add a new appendix by adding a \section here. The apa7
+% class handles the "Appendix A" heading itself.
+
+\appendix
+
+\section{Notation}
+\label{app:notation}
+
+\Cref{tab:notation} collects the notation used throughout the manuscript.
+
+\input{notation_table}
+
+% ---------- Appendix template ----------
+% Copy the block below for each new appendix. Give it a \label so the body
+% can point at it with \Cref{app:...}, and keep any table or figure it owns
+% in its own file, \input here the way notation_table is above.
+%
+% \section{SHORT DESCRIPTIVE TITLE}
+% \label{app:SHORT-KEY}
+%
+% Opening sentence saying what this appendix contains and which part of the
+% body it supports.
+%
+% \input{FILENAME_OF_TABLE_OR_FIGURE}

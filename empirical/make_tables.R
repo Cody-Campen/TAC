@@ -1,5 +1,5 @@
 # make_tables.R
-# Builds the regression table for sections/05_empirical_results.tex.
+# Builds the regression table for dissemination/05_empirical_results.tex.
 # fmt() comes from style.R, which main.R sources first.
 
 # Display labels for the model's terms.

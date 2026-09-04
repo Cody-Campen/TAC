@@ -18,6 +18,17 @@
 \usepackage{threeparttable}
 \usepackage{rotating}
 
+% ---------- Asset paths ----------
+% The manuscript lives in dissemination/, but the tables and figures it
+% pulls in are written next to the code that generates them, under
+% simulation/ and empirical/ at the project root. Both paths are declared
+% relative to the project root so the section files can keep saying
+% \input{simulation/tables/tab_sim} regardless of where the .tex sits.
+\graphicspath{{../}}
+\makeatletter
+\def\input@path{{../}}
+\makeatother
+
 
 % ---------- Equation spacing ----------
 \AtBeginDocument{%
@@ -73,19 +84,17 @@
 
 % ---------- Body ----------
 
-\input{sections/01_background}
-\input{sections/02_simulation_method}
-\input{sections/03_simulation_results}
-\input{sections/04_empirical_method}
-\input{sections/05_empirical_results}
-\input{sections/06_discussion}
+\input{01_background}
+\input{02_simulation_method}
+\input{03_simulation_results}
+\input{04_empirical_method}
+\input{05_empirical_results}
+\input{06_discussion}
 
 % ---------- References ----------
 \printbibliography
 
 % ---------- Appendices ----------
-% \appendix
-% \section{Supplementary Materials}
-% \label{app:supplement}
+\input{appendix}
 
 \end{document}

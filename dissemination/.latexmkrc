@@ -1,11 +1,11 @@
 # .latexmkrc
 # The paper's build recipe:
 #
-#     latexmk apa_template.tex
+#     cd dissemination && latexmk apa_template.tex
 #
 # Aux files (.aux, .bbl, .log, .fls, .fff/.ttt, ...) land in .build/;
-# the PDF and its .synctex.gz are written at the root, beside
-# apa_template.tex. The root PDF is the canonical output -- there is no
+# the PDF and its .synctex.gz are written in dissemination/, beside
+# apa_template.tex. That PDF is the canonical output -- there is no
 # copy step that can go stale -- and the .synctex.gz sits next to the
 # PDF it pairs with, which is what forward/inverse search needs.
 #

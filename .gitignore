@@ -32,6 +32,7 @@ empirical/data/processed/
 empirical/config/data_path.local.txt
 empirical/logs/
 # dynr writes and compiles a C file per model fit
+.dynrtmp/
 dynrtmp/
 
 # recovery plots written by the test suite

@@ -1,5 +1,5 @@
 # make_tables.R
-# Builds the simulation results table for sections/03_simulation_results.tex.
+# Builds the simulation results table for dissemination/03_simulation_results.tex.
 # fmt() comes from style.R, which main.R sources first.
 
 # Builds the simulation results table as LaTeX lines.

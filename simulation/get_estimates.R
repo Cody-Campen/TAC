@@ -81,7 +81,7 @@ get_estimates <- function(dataset) {
   )
 
   # dynr's c files go here.
-  dir.create("dynrtmp", showWarnings = FALSE)
+  dir.create(".dynrtmp", showWarnings = FALSE)
 
   model <- dynr.model(
     dynamics    = dynamics,
@@ -90,7 +90,7 @@ get_estimates <- function(dataset) {
     initial     = initial,
     transform   = trans,
     data        = data,
-    outfile     = sprintf("dynrtmp/dynr_model_%d.c", Sys.getpid())
+    outfile     = sprintf(".dynrtmp/dynr_model_%d.c", Sys.getpid())
   )
 
   # Try the fit; return the error frame if it failed.

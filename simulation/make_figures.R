@@ -1,5 +1,5 @@
 # make_figures.R
-# Builds the simulation results figure for sections/03_simulation_results.tex.
+# Builds the simulation results figure for dissemination/03_simulation_results.tex.
 # theme_apa_minimal() comes from style.R.
 
 library(ggplot2)

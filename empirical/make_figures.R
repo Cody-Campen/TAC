@@ -1,5 +1,5 @@
 # make_figures.R
-# Builds the empirical figure for sections/05_empirical_results.tex.
+# Builds the empirical figure for dissemination/05_empirical_results.tex.
 # theme_apa_minimal() comes from style.R.
 
 library(ggplot2)
